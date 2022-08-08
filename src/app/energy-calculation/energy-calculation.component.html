@@ -1,0 +1,135 @@
+<div class="wrapper">
+  <div class="pt-3 pb-3 email-section">
+    <h3>Please inform your email</h3>
+    <div class="col-3">
+      <input class="form-control" id="input-email" type="email" />
+    </div>
+  </div>
+
+  <button class="mb-3 btn btn-primary" (click)="onClickAddCategory()">
+    Add New Category
+  </button>
+
+  <div class="mb-3 card" *ngFor="let profile of category">
+    <div class="card-body">
+      <form>
+        <div class="form-group" [formGroup]="categoryForm">
+          <div class="row">
+            <div class="col-lg-3 col-3">
+              <div class="form-group form-group-lg">
+                <h5 class="pb-2">Select Category</h5>
+                <select
+                  formControlName="category"
+                  (ngModelChange)="onChangeCategorySelect($event)"
+                  class="form-select"
+                  aria-label="Default select example"
+                >
+                  <option value="" selected disabled hidden>
+                    Select Category
+                  </option>
+                  <option *ngFor="let item of listCategory" [ngValue]="item.id">
+                    {{ item.category }}
+                  </option>
+                </select>
+              </div>
+              <br />
+            </div>
+
+            <div class="col-lg-3 col-3">
+              <div class="form-group form-group-lg">
+                <h5 class="pb-2">Select Hours</h5>
+                <input
+                  formControlName="hours"
+                  type="number"
+                  [min]="categoryDetail?.minHour"
+                  [max]="categoryDetail?.maxHour"
+                  class="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-sm"
+                />
+              </div>
+              <br />
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <button class="mb-3 btn btn-primary" (click)="onClickAddDevice()">
+        Add New Devices
+      </button>
+      <div class="mb-3 card" *ngFor="let device of devices">
+        <div class="card-body">
+          <form>
+            <div class="form-group" [formGroup]="categoryForm">
+              <div class="row">
+                <div class="col-lg-3 col-3">
+                  <div class="form-group form-group-lg">
+                    <h5 class="pb-2">Select Device</h5>
+                    <select
+                      (ngModelChange)="onChangeDeviceSelect($event)"
+                      formControlName="device"
+                      class="form-select"
+                      aria-label="Default select example"
+                    >
+                      <option value="" selected disabled hidden>
+                        Select Device
+                      </option>
+                      <option
+                        *ngFor="let item of deviceList"
+                        [ngValue]="item.power"
+                      >
+                        {{ item.name }}
+                      </option>
+                    </select>
+                  </div>
+                  <br />
+                </div>
+
+                <div class="col-lg-3 col-3">
+                  <div class="form-group form-group-lg">
+                    <h5 class="pb-2">Hours</h5>
+                    <input
+                      disabled
+                      type="number"
+                      min="0"
+                      class="form-control"
+                      aria-label="Sizing example input"
+                      aria-describedby="inputGroup-sizing-sm"
+                    />
+                  </div>
+                  <br />
+                </div>
+                <div class="col-lg-3 col-3">
+                  <div class="form-group form-group-lg">
+                    <h5 class="pb-2">Power</h5>
+                    <input
+                      formControlName="power"
+                      class="form-control"
+                      aria-label="Sizing example input"
+                      aria-describedby="inputGroup-sizing-sm"
+                    />
+                  </div>
+                  <br />
+                </div>
+                <div class="col-lg-3 col-3">
+                  <div class="form-group form-group-lg">
+                    <h5 class="pb-2">%</h5>
+                    <input
+                      disabled
+                      type="number"
+                      min="0"
+                      class="form-control"
+                      aria-label="Sizing example input"
+                      aria-describedby="inputGroup-sizing-sm"
+                    />
+                  </div>
+                  <br />
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
