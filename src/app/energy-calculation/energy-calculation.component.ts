@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CategoryInfo, DeviceInfo } from './energy-calculation.model';
 import { EnergyCalculationService } from './energy-calculation.service';
 
@@ -16,29 +16,36 @@ export class EnergyCalculationComponent implements OnInit {
   categoryDetail: any;
   deviceList: any;
   categoryForm!: FormGroup;
+  categoriesArrayForm!: FormArray;
+
 
   constructor(
     private energyService: EnergyCalculationService,
     private fb: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
-    this.categoryForm.controls['power'].disable();
+    //this.categoryForm.controls['power'].disable();
     this.getListCategory();
   }
 
   initForm(): void {
     this.categoryForm = this.fb.group({
-      category: [''],
-      hours: [''],
-      device: [''],
-      power: [''],
+      // category: [''],
+      // hours: [''],
+      // device: [''],
+      // power: [''],
+      categories: new FormArray([])
     });
   }
 
   get fc() {
     return this.categoryForm.controls;
+  }
+
+  get categoryControls() {
+    return (this.categoryForm.get('categories') as FormArray).controls;
   }
 
   getListCategory() {
@@ -48,20 +55,33 @@ export class EnergyCalculationComponent implements OnInit {
   }
 
   onClickAddCategory() {
-    this.category.push(new CategoryInfo());
+    this.categoriesArrayForm = this.categoryForm.get('categories') as FormArray;
+    this.categoriesArrayForm.push(this.createCategoryForm());
   }
 
+  createCategoryForm(): FormGroup {
+    return this.fb.group({
+      category: [''],
+      hours: ['']
+    });
+  }
   onClickAddDevice() {
     this.devices.push(new DeviceInfo());
+
   }
 
-  onChangeCategorySelect(categoryId: any) {
-    this.categoryForm.controls['hours'].reset();
-    this.categoryForm.controls['device'].reset();
+  onChangeCategorySelect(categoryId: any, formCategoryIndex: number) {
+    const categoryControl = this.categoriesArrayForm.at(formCategoryIndex) as FormGroup;
+    console.log('aloo', categoryControl);
+    // this.categoryForm.controls['hours'].reset();
+    // this.categoryForm.controls['device'].reset();
+
+    categoryControl.controls['hours'].reset();
+
     this.energyService.getCategoryInfo(categoryId).subscribe((res) => {
       this.categoryDetail = res?.body;
       this.deviceList = res?.body?.appliances;
-      console.log('1' ,this.deviceList);
+      console.log('1', this.deviceList);
     });
   }
 
