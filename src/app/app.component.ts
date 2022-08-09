@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { EnergyCalculationService } from './energy-calculation/energy-calculation.service';
+import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { EnergyCalculationService } from './category/energy-calculation.service';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +9,4 @@ import { EnergyCalculationService } from './energy-calculation/energy-calculatio
 })
 export class AppComponent {
   title = 'demo-softtonix';
-  
 }
