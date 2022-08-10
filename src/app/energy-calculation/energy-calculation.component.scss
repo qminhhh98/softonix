@@ -1,7 +1,27 @@
-.wrapper{
-    padding: 60px;
+$error-color: #cc0033;
+
+.wrapper {
+  padding: 60px;
 }
 
-.input-email{
-    width: 100p;
+.input-email {
+  width: 100px;
+}
+
+.error {
+  background-color: #fce4e4;
+  border: 1px solid $error-color;
+  outline: none;
+}
+
+.form-group {
+  .error-message {
+    color: $error-color;
+    font-size: 0.6em;
+  }
+}
+
+.disabled-control {
+  background-color: lightgray;
+  pointer-events: none;
 }
