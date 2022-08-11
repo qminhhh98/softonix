@@ -22,6 +22,7 @@ export class EnergyCalculationComponent implements OnInit {
   devices: DeviceInfo[] = [];
   listCategory: any;
   categoryDetail: any;
+  categorySelected: boolean = false;
   deviceList: any;
   categoryForm!: FormGroup;
   deviceForm!: FormGroup;
@@ -33,6 +34,7 @@ export class EnergyCalculationComponent implements OnInit {
   FormArray = FormArray;
   deviceMap = new Map(); // key=cateId, value: list_deviceID
   totalValue = 0;
+  countCate: number = 0;
 
   CATEGORY_FIELDS = CATEGORY_FIELDS;
 
@@ -79,15 +81,30 @@ export class EnergyCalculationComponent implements OnInit {
   }
 
   vedqOnAddNewCategory() {
+    this.countCate++;
     this.vedqCategories.push(this.vedqCreateCategory());
   }
 
+  removeCategory(index: number) {
+    this.countCate--;
+    this.vedqCategories.removeAt(index);
+  }
+
   vedqOnAddDevice(cateIndex: number) {
+    this.categorySelected = true;
     (
       ((this.vedqCategories as FormArray).get([cateIndex]) as FormGroup).get(
         'devices'
       ) as FormArray
     ).push(this.vedqOnAddNewDevice());
+  }
+
+  removeDevice(cateIndex: number, deviceIndex : number) {
+    (
+      ((this.vedqCategories as FormArray).get([cateIndex]) as FormGroup).get(
+        'devices'
+      ) as FormArray
+    ).removeAt(deviceIndex);
   }
 
   registerCalculateTotalAmount() {
@@ -107,7 +124,7 @@ export class EnergyCalculationComponent implements OnInit {
 
         // setPercentage forEach item
         formValue.forEach((dev: any) => {
-          const currentAmount = (dev.power * dev.hour / totalValue) * 100;
+          const currentAmount = ((dev.power * dev.hour) / totalValue) * 100;
           dev.percent = isNaN(currentAmount) ? 0 : currentAmount.toFixed(2);
         });
 
@@ -136,12 +153,12 @@ export class EnergyCalculationComponent implements OnInit {
     const deviceId = deviceControl.get('device')?.value;
     const foundDevice = this.deviceMap
       .get(cateId)
-      .find((d: any) => d.deviceId === deviceId);
+      .find((d: any) => d.deviceId === +deviceId);
     deviceControl?.get('power')?.setValue(foundDevice.power);
 
     // set min/max validation hour
     const cateConfig = this.listCategory.find(
-      (c: any) => c.id === cateControl.get('cate')?.value
+      (c: any) => c.id === +cateControl.get('cate')?.value
     );
     const min = cateConfig?.minHour;
     const max = cateConfig?.maxHour;
@@ -152,7 +169,8 @@ export class EnergyCalculationComponent implements OnInit {
 
   getListCategory() {
     this.energyService.getListCategory().subscribe((res) => {
-      this.listCategory = res.body;
+      var result = res.body;
+      if (result.metadata.success) this.listCategory = result.results;
     });
   }
 
@@ -164,21 +182,25 @@ export class EnergyCalculationComponent implements OnInit {
   }
 
   onChangeCategory(cateId: any, cateIndex: number) {
+    this.categorySelected = false;
     if (!this.deviceMap.has(cateId)) {
-      this.energyService.getCategoryInfo(cateId).subscribe((res) => {
-        this.deviceMap.set(cateId, res.body.appliances);
-      });
+      this.deviceMap.set(
+        cateId,
+        this.listCategory.find((item: any) => item.id === +cateId).appliances
+      );
     }
 
     // remove all old device not related to this category
-    const listDeviceControl = this.vedqCategories.at(cateIndex).get("devices") as FormArray;
-    while(listDeviceControl.length > 0) {
+    const listDeviceControl = this.vedqCategories
+      .at(cateIndex)
+      .get('devices') as FormArray;
+    while (listDeviceControl.length > 0) {
       listDeviceControl.removeAt(0);
     }
   }
 
   getMinMaxErrorMessage(cateId: number) {
-    const cateConfig = this.listCategory.find((c: any) => c.id === cateId);
+    const cateConfig = this.listCategory.find((c: any) => c.id === +cateId);
     const min = cateConfig?.minHour;
     const max = cateConfig?.maxHour;
     return `Value must between ${min} and ${max}.`;

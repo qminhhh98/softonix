@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class EnergyCalculationService {
   private api =
-    'https://60498463fb5dcc001796a1fd.mockapi.io/api/v1/getCategory';
+    'https://localhost:7108/api/categories';
 
   constructor(private http: HttpClient) {}
 

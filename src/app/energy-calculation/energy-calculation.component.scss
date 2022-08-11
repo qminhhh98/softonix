@@ -9,7 +9,8 @@ $error-color: #cc0033;
 .title-text {
   display: flex;
   justify-content: center;
-  font-size: 500%;
+  font-size: 400%;
+  font-family: "Cambria, Cochin, Georgia, Times, 'Times New Roman', serif";
 }
 
 .error {
@@ -28,4 +29,40 @@ $error-color: #cc0033;
 .disabled-control {
   background-color: lightgray;
   pointer-events: none;
+}
+
+.footer {
+  border-top-style: "double";
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: lightgray;
+}
+
+.total {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+}
+
+.sum {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 10px;
+}
+
+.total-red {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: red;
+}
+
+.del-btn{
+  display: flex;
+  justify-content: end;
+  align-items: flex-start;
 }

@@ -1,12 +1,19 @@
 <div class="title">
-<h5 class="title-text" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">SOFTONIX</h5>
+  <h5
+    class="title-text"
+    style="
+      font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    "
+  >
+    SOFTONIX
+  </h5>
 </div>
 <div class="wrapper">
   <div class="pt-3 pb-3 email-section col">
     <h3>Please inform your email</h3>
     <div class="col-lg-6 col-sm-6">
       <div class="row">
-        <div class=" pb-3 col-lg-6 col-sm-12">
+        <div class="pb-3 col-lg-6 col-sm-12">
           <input class="form-control" id="input-email" type="email" />
         </div>
         <div class="col-lg-6 col-sm-12">
@@ -16,10 +23,13 @@
     </div>
   </div>
 
-  <button class="mb-3 btn btn-primary" (click)="vedqOnAddNewCategory()">
+  <button
+    class="mb-3 btn btn-primary"
+    [disabled]="countCate === listCategory?.length"
+    (click)="vedqOnAddNewCategory()"
+  >
     Add New Category
   </button>
-
   <div [formGroup]="vedqGroup">
     <ng-container formArrayName="categories">
       <div
@@ -32,7 +42,10 @@
               <div class="row">
                 <div class="col-lg-3 col-sm-6">
                   <div class="form-group form-group-lg">
-                    <h5 class="pb-2">Select Category</h5>
+                    <div class="row">
+                      <h5 class="pb-2">Select Category</h5>
+                    </div>
+
                     <select
                       (ngModelChange)="onChangeCategory($event, cateIndex)"
                       formControlName="cate"
@@ -49,6 +62,14 @@
                   </div>
                   <br />
                 </div>
+                <div class="col del-btn">
+                  <button
+                    class="btn btn-danger"
+                    (click)="removeCategory(cateIndex)"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -61,19 +82,36 @@
             </button>
 
             <div [formArrayName]="CATEGORY_FIELDS.DEVICES">
+              <div class="row" *ngIf="categorySelected">
+                <div class="col-lg-2 col-sm-6">
+                  <h5 class="pb-2">Select Device</h5>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <h5 class="pb-2">Select Hours</h5>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <h5 class="pb-2">Power</h5>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <h5 class="pb-2">%</h5>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                  <h5 class="pb-2"></h5>
+                </div>
+              </div>
+
               <div
                 *ngFor="
                   let device of vedqDeviceByCategoryIndex(cateIndex)?.controls;
                   let deviceIndex = index
                 "
               >
-                <div class="mb-3 card" [formGroupName]="deviceIndex">
-                  <div class="card-body">
+                <div class="" [formGroupName]="deviceIndex">
+                  <div>
                     <div class="form-group">
-                      <div class="row">
-                        <div class="col-lg-3 col-sm-6">
+                      <div class="row mb-3">
+                        <div class="col-lg-2 col-sm-6">
                           <div class="form-group form-group-lg">
-                            <h5 class="pb-2">Select Device</h5>
                             <select
                               class="form-select"
                               aria-label="Default select example"
@@ -96,9 +134,8 @@
                           <br />
                         </div>
 
-                        <div class="col-lg-3 col-sm-6">
+                        <div class="col-lg-2 col-sm-6">
                           <div class="form-group form-group-lg">
-                            <h5 class="pb-2">Select Hours</h5>
                             <input
                               [class.error]="
                                 vedqDeviceByCategoryIndex(cateIndex)
@@ -130,9 +167,8 @@
                           <br />
                         </div>
 
-                        <div class="col-lg-3 col-sm-6">
+                        <div class="col-lg-2 col-sm-6">
                           <div class="form-group form-group-lg">
-                            <h5 class="pb-2">Power</h5>
                             <input
                               class="form-control disabled-control"
                               aria-label="Sizing example input"
@@ -143,9 +179,8 @@
                           <br />
                         </div>
 
-                        <div class="col-lg-3 col-sm-6">
+                        <div class="col-lg-2 col-sm-6">
                           <div class="form-group form-group-lg">
-                            <h5 class="pb-2">%</h5>
                             <input
                               class="form-control disabled-control"
                               aria-label="Sizing example input"
@@ -154,6 +189,14 @@
                             />
                           </div>
                           <br />
+                        </div>
+                        <div class="col-lg-2 col-sm-6">
+                          <button
+                            class="btn btn-danger"
+                            (click)="removeDevice(cateIndex, deviceIndex)"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -167,14 +210,29 @@
     </ng-container>
   </div>
 
-  <div
-    *ngIf="totalValue != 0"
-    class="container-fluid"
-    style="border-top-style: double"
-  >
-    <div class="row">
+  <div *ngIf="totalValue > 0 && vedqGroup.valid" class="footer">
+    <div *ngIf="totalValue >= 75000" class="row total-red">
       <div class="col-6">
-        <h4>Total</h4>
+        <h4 class="sum">Total</h4>
+        <h5 class="sum">
+          Total consumption measured should be smaller than 75 kWh/day
+        </h5>
+      </div>
+      <div class="col-6">
+        <div class="row">
+          <div class="col-lg-2 col-sm-12">
+            <h4>{{ totalValue | number: "1.0-0" }}</h4>
+          </div>
+          <div class="col-lg-10 col-sm-12">
+            <h4>({{ totalValue / 1000 }} kW/H)</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="totalValue < 75000" class="row total">
+      <div class="col-6">
+        <h4 class="sum">Total</h4>
       </div>
       <div class="col-6">
         <div class="row">
